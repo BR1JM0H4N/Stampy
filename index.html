@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Stampy</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+:root {
+      --bg: var(--md-surfaceVariant, #22271E);
+      --fg: var(--md-onSurface, #E2E8D9);
+      --mut: var(--md-onSurfaceVariant, #A7ADA0);
+      --card: var(--md-surfaceContainer, #161B14);
+      --surface: var(--md-surface, #0C0F0A);
+      --surface-container: var(--card);
+      --surface-high: var(--md-surfaceContainerHigh, #1C2119);
+      --line: var(--md-outlineVariant, #49454F);
+      --outline: var(--line);
+      --acc: var(--md-secondary, #BCCBB1);
+      --accfg: var(--bg);
+      --acc-container: var(--md-onSecondary, #374430);
+      --on-acc-container: var(--fg);
+      --track: var(--acc-container);
+      box-sizing: border-box;
+      padding-top: var(--safe-area-inset-top, 0px);
+      padding-bottom: var(--safe-area-inset-bottom, 0px);
+    }
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+
+    html, body {
+      margin: 0;
+      -webkit-user-select: none;
+      user-select: none;
+
+    }
+    body {
+      background: var(--surface);
+      color: var(--fg);
+      font-family: 'Roboto', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .safe-top-patch {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: calc(var(--safe-area-inset-top, 0px));
+      background-color: var(--bg);
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .safe-bottom-patch {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: calc(var(--safe-area-inset-bottom, 0px));
+      background-color: var(--suface);
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    /* ===== Top app bar ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      height: 64px;
+      padding: 55px 16px 30px 16px;
+      background: var(--bg);
+      color: var(--fg);
+      font-size: 1.375rem;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+    header strong {
+      font-weight: 400;
+    }
+    .logo {
+      width: 36px;
+      height: 36px;
+      flex: none;
+      margin-right: 12px;
+      color: var(--acc);
+    }
+    .logo .logo-bg {
+      fill: var(--acc-container);
+    }
+    .logo .logo-page {
+      fill: var(--surface);
+      stroke: var(--acc);
+    }
+    .logo .logo-fold {
+      fill: var(--acc);
+    }
+    .logo .logo-mark {
+      fill: var(--acc);
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px 16px 24px;
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* ===== Controls card ===== */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+      background: var(--card);
+      border-radius: 24px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .row > label {
+      flex: 1 1 140px;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: .75rem;
+      font-weight: 500;
+      color: var(--mut);
+      letter-spacing: .4px;
+    }
+
+    /* File picker as tonal button */
+    input[type="file"] {
+      width: 100%;
+      min-height: 48px;
+      background: var(--acc-container);
+      color: var(--on-acc-container);
+      border: none;
+      border-radius: 16px;
+      padding: 14px 20px;
+      font-family: inherit;
+      font-size: .875rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    input[type="file"]::file-selector-button,
+    input[type="file"]::-webkit-file-upload-button {
+      visibility: hidden;
+      width: 0;
+      padding: 0;
+      margin: 0;
+    }
+    input[type="file"]::before {
+      content: 'Choose PDF';
+      margin-right: 12px;
+      font-weight: 500;
+    }
+
+    /* Outlined text field */
+    input[type="text"] {
+      width: 100%;
+      height: 56px;
+      background: transparent;
+      color: var(--fg);
+      border: 1px solid var(--outline);
+      border-radius: 12px;
+      padding: 0 16px;
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input[type="text"]::placeholder {
+      color: var(--mut);
+    }
+    input[type="text"]:focus {
+      border-color: var(--acc);
+      box-shadow: inset 0 0 0 1px var(--acc);
+    }
+
+    /* Material slider */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 40px;
+      background: transparent;
+      margin: 0;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 16px;
+      background: var(--track);
+      border-radius: 8px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 4px;
+      height: 40px;
+      margin-top: -12px;
+      border-radius: 2px;
+      background: var(--acc);
+      border: none;
+    }
+    input[type="range"]::-moz-range-track {
+      height: 16px;
+      background: var(--track);
+      border-radius: 8px;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 4px;
+      height: 40px;
+      border-radius: 2px;
+      background: var(--acc);
+      border: none;
+    }
+    input[type="range"]:focus-visible {
+      outline: 2px solid var(--acc);
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
+
+    /* Color picker */
+    #color {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 48px;
+      padding: 0;
+      background: transparent;
+      border: 1px solid var(--outline);
+      border-radius: 16px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    #color::-webkit-color-swatch-wrapper {
+      padding: 4px;
+    }
+    #color::-webkit-color-swatch {
+      border: none;
+      border-radius: 12px;
+    }
+    #color::-moz-color-swatch {
+      border: none;
+      border-radius: 12px;
+    }
+
+    /* Filled button */
+    button {
+      min-height: 48px;
+      width: 100%;
+      background: var(--acc);
+      color: var(--accfg);
+      padding: 0 24px;
+      font-family: inherit;
+      font-size: .875rem;
+      font-weight: 500;
+      letter-spacing: .1px;
+      border-radius: 24px;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow .15s, filter .15s, transform .1s;
+    }
+    button:hover {
+      box-shadow: 0 1px 3px 1px rgba(0,0,0,.35);
+      filter: brightness(1.05);
+    }
+    button:active {
+      transform: scale(.98);
+      filter: brightness(.92);
+    }
+    button:focus-visible {
+      outline: 2px solid var(--fg);
+      outline-offset: 2px;
+    }
+
+    /* Small buttons */
+    button.icon-btn, button.tonal, button.text-btn {
+      width: auto;
+      box-shadow: none;
+    }
+    button.icon-btn {
+      width: 40px;
+      min-height: 40px;
+      height: 40px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--fg);
+    }
+    button.icon-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+    button.icon-btn:hover {
+      background: color-mix(in srgb, var(--fg) 10%, transparent);
+      box-shadow: none;
+    }
+    button.tonal {
+      background: var(--acc-container);
+      color: var(--on-acc-container);
+    }
+    button.text-btn {
+      background: transparent;
+      color: var(--acc);
+      padding: 0 12px;
+      min-height: 40px;
+    }
+    button.text-btn:hover {
+      background: color-mix(in srgb, var(--acc) 12%, transparent);
+      box-shadow: none;
+    }
+    #settings-btn {
+      margin-left: auto;
+      margin-right: -8px;
+    }
+    .inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .inline input[type="range"] {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* ===== Settings dialog ===== */
+    dialog {
+      background: var(--surface-high);
+      color: var(--fg);
+      border: none;
+      border-radius: 28px;
+      padding: 24px;
+      width: min(92vw, 400px);
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,.5);
+    }
+    dialog::backdrop {
+      background: rgba(0,0,0,.6);
+    }
+    dialog h2 {
+      margin: 0 0 16px;
+      font-size: 1.5rem;
+      font-weight: 400;
+    }
+    dialog h3 {
+      margin: 20px 0 8px;
+      font-size: .75rem;
+      font-weight: 500;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      color: var(--acc);
+    }
+    dialog p {
+      margin: 0 0 12px;
+      font-size: .8125rem;
+      line-height: 1.5;
+      color: var(--mut);
+    }
+    .k-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .875rem;
+    }
+    #k-value {
+      font-family: 'Roboto Mono', monospace;
+      color: var(--acc);
+    }
+    .about-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .about-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: .9375rem;
+      word-break: break-all;
+    }
+    .about-row span {
+      font-size: .6875rem;
+      color: var(--mut);
+      letter-spacing: .4px;
+    }
+    .about-row a {
+      color: var(--acc);
+      text-decoration: none;
+    }
+    .about-row a:hover {
+      text-decoration: underline;
+    }
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* ===== PDF preview ===== */
+    #pdf-container {
+      position: relative;
+      overflow: hidden;
+      align-self: center;
+      max-width: 100%;
+      background: var(--surface-high);
+      border-radius: 24px;
+      min-height: 160px;
+      min-width: 160px;
+    }
+    #pdf-canvas {
+      display: block;
+      max-width: 100%;
+    }
+
+    #watermark {
+      position: absolute;
+      font-weight: 700;
+      user-select: none;
+      -webkit-user-select: none;
+      white-space: nowrap;
+      cursor: move;
+      touch-action: none;
+      transform-origin: center center;
+    }
+
+    /* ===== Log panel ===== */
+    #log-panel {
+      display: none;
+      width: 100%;
+      background: var(--card);
+      color: var(--mut);
+      font-family: 'Roboto Mono', monospace;
+      font-size: .7rem;
+      padding: 12px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      max-height: 120px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    @media (min-width: 600px) {
+      .row > label {
+        flex: 1 1 0;
+      }
+      button {
+        width: auto;
+        align-self: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="safe-top-patch"></div>
+
+  <header>
+<svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+      <rect class="logo-bg" x="0" y="0" width="48" height="48" rx="14"/>
+      <g class="logo-mark">
+        <rect x="18.5" y="7" width="11" height="9" rx="4.5"/>
+        <path d="M21 15h6l1.2 10h-8.4z"/>
+        <rect x="10.5" y="24.5" width="27" height="7.5" rx="2.5"/>
+        <rect x="13" y="36" width="22" height="3" rx="1.5" opacity=".55"/>
+      </g>
+    </svg>
+    <strong>Stampy</strong>
+    <button id="settings-btn" class="icon-btn" type="button" aria-label="Settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" /></svg>
+    </button>
+  </header>
+
+  <main>
+    <div class="controls">
+      <input type="file" id="pdf-file" accept="application/pdf">
+      <input type="text" id="watermark-text" placeholder="Watermark text" value="Sample Watermark">
+      <div class="row">
+        <label>Size<input type="range" id="size" min="5" max="100" value="30"></label>
+        <label>Opacity<input type="range" id="opacity" min="0" max="1" step="0.01" value="0.5"></label>
+      </div>
+      <div class="row">
+        <label>Rotation
+          <span class="inline">
+            <input type="range" id="rotation" min="-180" max="180" step="1" value="0">
+            <button id="reset-rotation" class="icon-btn tonal" type="button" aria-label="Reset rotation" title="Reset rotation">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" /></svg>
+            </button>
+          </span>
+        </label>
+        <label>Color<input type="color" id="color" value="#cccccc"></label>
+      </div>
+      <button id="apply">Apply watermark &amp; download</button>
+    </div>
+
+    <div id="pdf-container">
+      <canvas id="pdf-canvas"></canvas>
+      <div id="watermark">
+        Sample Watermark
+      </div>
+    </div>
+
+    <div id="log-panel"></div>
+  </main>
+  <div class="safe-bottom-patch"></div>
+
+
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <h2 id="settings-title">Settings</h2>
+
+    <h3>Export size (K)</h3>
+    <p>
+      Scales the watermark in the exported PDF relative to the preview. Lower = smaller.
+    </p>
+    <label>
+      <span class="k-head"><span>K value</span><span id="k-value">0.90</span></span>
+      <input type="range" id="k-slider" min="0.5" max="1.5" step="0.01" value="0.9">
+    </label>
+    <div class="dialog-actions" style="justify-content:flex-start;margin-top:8px">
+      <button id="k-reset" class="text-btn" type="button">Reset to 0.90</button>
+    </div>
+
+    <h3>About me</h3>
+    <div class="about-card">
+      <div class="about-row">
+        <span>GitHub user ID</span><b id="gh-user"></b>
+      </div>
+      <div class="about-row">
+        <span>GitHub profile</span><a id="gh-url" target="_blank" rel="noopener noreferrer"></a>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button id="settings-close" class="tonal" type="button">Close</button>
+    </div>
+  </dialog>
+
+  <script src="./pdf.min.js"></script>
+  <script src="./pdf-lib.min.js"></script>
+
+  <script>
+    const pdfFile = document.getElementById('pdf-file');
+    const pdfCanvas = document.getElementById('pdf-canvas');
+    const pdfContainer = document.getElementById('pdf-container');
+    const watermark = document.getElementById('watermark');
+    const watermarkInput = document.getElementById('watermark-text');
+    const logPanel = document.getElementById('log-panel');
+    const sizeSlider = document.getElementById('size');
+    const colorPicker = document.getElementById('color');
+    const opacitySlider = document.getElementById('opacity');
+    const rotationSlider = document.getElementById('rotation');
+
+    let pdfFileObject = null;
+    let scale = 1;
+    let startX, startY, offsetX = 50, offsetY = 50;
+    let fontSize = 30;
+    let colorHex = "#cccccc";
+    let opacity = 0.5;
+    let rotation = 0;
+
+    // ===== Edit these =====
+    const GITHUB_USER = 'your-github-username';
+    const GITHUB_URL = 'https://github.com/' + GITHUB_USER;
+    const K_DEFAULT = 0.9;
+    // ======================
+    let k = K_DEFAULT; // PDF watermark size relative to preview
+    try {
+      const saved = parseFloat(localStorage.getItem('wm_k'));
+      if (saved >= 0.5 && saved <= 1.5) k = saved;
+    } catch (e) {}
+
+    function log(msg) {
+      console.log(msg);
+      logPanel.textContent += msg + "\n";
+      logPanel.scrollTop = logPanel.scrollHeight;
+    }
+
+    pdfFile.addEventListener('change', async (e) => {
+      pdfFileObject = e.target.files[0];
+      if (!pdfFileObject) return;
+      window.fileName = pdfFileObject.name;
+      log("File selected: "+pdfFileObject.name);
+      const buffer = await pdfFileObject.arrayBuffer();
+      renderFirstPage(buffer);
+    });
+
+    async function renderFirstPage(data) {
+      log("Rendering first page preview...");
+      const loadingTask = pdfjsLib.getDocument({
+        data
+      });
+      const pdf = await loadingTask.promise;
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({
+        scale: 1
+      });
+      scale = Math.min((window.innerWidth*0.9)/viewport.width,
+        800/viewport.height);
+      const scaledViewport = page.getViewport({
+        scale
+      });
+      const ctx = pdfCanvas.getContext('2d');
+      pdfCanvas.height = scaledViewport.height;
+      pdfCanvas.width = scaledViewport.width;
+      await page.render({
+        canvasContext: ctx,
+        viewport: scaledViewport
+      }).promise;
+      watermark.style.left = offsetX+'px';
+      watermark.style.top = offsetY+'px';
+      updateWatermarkStyle();
+      log("Preview rendered at scale: "+scale.toFixed(2));
+    }
+
+    watermarkInput.addEventListener('input', ()=> {
+      watermark.textContent = watermarkInput.value;
+      clampWatermark();
+      log("Watermark text changed: "+watermarkInput.value);
+    });
+
+    sizeSlider.addEventListener('input', ()=> {
+      fontSize = parseInt(sizeSlider.value);
+      updateWatermarkStyle();
+    });
+
+    colorPicker.addEventListener('input', ()=> {
+      colorHex = colorPicker.value;
+      updateWatermarkStyle();
+    });
+
+    rotationSlider.addEventListener('input', ()=> {
+      rotation = parseInt(rotationSlider.value);
+      updateWatermarkStyle();
+    });
+
+    opacitySlider.addEventListener('input', ()=> {
+      opacity = parseFloat(opacitySlider.value);
+      watermark.style.opacity = opacity;
+    });
+
+    function clampWatermark() {
+      const w = watermark.offsetWidth, h = watermark.offsetHeight;
+      const rad = rotation * Math.PI / 180;
+      const bw = w*Math.abs(Math.cos(rad)) + h*Math.abs(Math.sin(rad));
+      const bh = w*Math.abs(Math.sin(rad)) + h*Math.abs(Math.cos(rad));
+      const cw = pdfCanvas.clientWidth, ch = pdfCanvas.clientHeight;
+      let cx = offsetX + w/2, cy = offsetY + h/2;
+      cx = Math.min(Math.max(bw/2, cx),
+        Math.max(bw/2, cw - bw/2));
+      cy = Math.min(Math.max(bh/2, cy),
+        Math.max(bh/2, ch - bh/2));
+      offsetX = cx - w/2;
+      offsetY = cy - h/2;
+      watermark.style.left = offsetX + 'px';
+      watermark.style.top = offsetY + 'px';
+    }
+
+    function updateWatermarkStyle() {
+      watermark.style.fontSize = fontSize + "px";
+      watermark.style.color = colorHex;
+      watermark.style.opacity = opacity;
+      watermark.style.transform = `rotate(${rotation}deg)`;
+      clampWatermark();
+    }
+
+    function startDrag(e) {
+      e.preventDefault();
+      const rect = pdfContainer.getBoundingClientRect();
+      startX = (e.touches ? e.touches[0].clientX: e.clientX) - watermark.offsetLeft - rect.left;
+      startY = (e.touches ? e.touches[0].clientY: e.clientY) - watermark.offsetTop - rect.top;
+      document.addEventListener('mousemove',
+        drag);
+      document.addEventListener('touchmove',
+        drag,
+        {
+          passive: false
+        });
+      document.addEventListener('mouseup',
+        stopDrag);
+      document.addEventListener('touchend',
+        stopDrag);
+      log("Drag start");
+    }
+
+    function drag(e) {
+      e.preventDefault();
+      const rect = pdfContainer.getBoundingClientRect();
+      let x = (e.touches ? e.touches[0].clientX: e.clientX) - rect.left - startX;
+      let y = (e.touches ? e.touches[0].clientY: e.clientY) - rect.top - startY;
+      offsetX = x;
+      offsetY = y;
+      clampWatermark();
+    }
+
+    function stopDrag() {
+      document.removeEventListener('mousemove',
+        drag);
+      document.removeEventListener('touchmove',
+        drag);
+      document.removeEventListener('mouseup',
+        stopDrag);
+      document.removeEventListener('touchend',
+        stopDrag);
+      log("Drag stop at x:"+offsetX+" y:"+offsetY);
+    }
+
+    document.getElementById('reset-rotation').addEventListener('click', () => {
+      rotation = 0;
+      rotationSlider.value = 0;
+      updateWatermarkStyle();
+      log("Rotation reset");
+    });
+
+    // ===== Settings dialog =====
+    const dlg = document.getElementById('settings-dialog');
+    const kSlider = document.getElementById('k-slider');
+    const kValue = document.getElementById('k-value');
+    function setK(v) {
+      k = v;
+      kSlider.value = v;
+      kValue.textContent = v.toFixed(2);
+      try {
+        localStorage.setItem('wm_k',
+          String(v));
+      } catch (e) {}
+    }
+    setK(k);
+    kSlider.addEventListener('input', () => setK(parseFloat(kSlider.value)));
+    document.getElementById('k-reset').addEventListener('click', () => setK(K_DEFAULT));
+    document.getElementById('gh-user').textContent = GITHUB_USER;
+    const ghUrl = document.getElementById('gh-url');
+    ghUrl.textContent = GITHUB_URL;
+    ghUrl.href = GITHUB_URL;
+    document.getElementById('settings-btn').addEventListener('click', () => dlg.showModal());
+    document.getElementById('settings-close').addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => {
+      if (e.target === dlg) dlg.close();
+    });
+
+    window.addEventListener('resize', clampWatermark);
+    watermark.addEventListener('mousedown', startDrag);
+    watermark.addEventListener('touchstart', startDrag);
+
+    document.getElementById('apply').addEventListener('click', async ()=> {
+      if (!pdfFileObject) return alert('Upload a PDF first');
+      log("Applying watermark...");
+      const buffer = await pdfFileObject.arrayBuffer();
+      const pdfDoc = await PDFLib.PDFDocument.load(buffer);
+      const pages = pdfDoc.getPages();
+      const {
+        width,
+        height
+      } = pages[0].getSize();
+      const scaleX = width/pdfCanvas.width;
+      const scaleY = height/pdfCanvas.height;
+      const pdfFontSize = fontSize * Math.sqrt(scaleX*scaleY) * k;
+      const font = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+      const ascent = font.heightAtSize(pdfFontSize);
+      const wmX = offsetX*scaleX;
+      const wmY = height - (offsetY*scaleY) - (ascent - pdfFontSize*0.05);
+      const rgb = (()=> {
+        const n = parseInt(colorHex.slice(1), 16);
+        return {
+          r: ((n>>16)&255)/255, g: ((n>>8)&255)/255, b: (n&255)/255
+        };
+      })();
+      const text = watermarkInput.value || 'Watermark';
+      // Rotate around the preview box centre so the PDF matches the preview
+      const boxW = watermark.offsetWidth * scaleX * k;
+      const boxH = watermark.offsetHeight * scaleY * k;
+      // keep the centre of the preview box as the centre of the smaller text
+      const cxPdf = (offsetX + watermark.offsetWidth/2) * scaleX;
+      const cyPdf = height - (offsetY + watermark.offsetHeight/2) * scaleY;
+      const relX = -boxW/2;
+      const relY = boxH/2 - (ascent - pdfFontSize*0.05);
+      const phi = -rotation * Math.PI / 180; // CSS is clockwise, PDF is counter-clockwise
+      const rotX = cxPdf + relX*Math.cos(phi) - relY*Math.sin(phi);
+      const rotY = cyPdf + relX*Math.sin(phi) + relY*Math.cos(phi);
+      pages.forEach((page, i)=> {
+        page.drawText(text, {
+          x: rotX, y: rotY, size: pdfFontSize,
+          rotate: PDFLib.degrees(-rotation),
+          font, color: PDFLib.rgb(rgb.r, rgb.g, rgb.b), opacity: opacity
+        });
+        log("Watermark drawn on page "+(i+1));
+      });
+      const pdfBytes = await pdfDoc.save();
+      log("Saving new PDF...");
+      const blob = new Blob([pdfBytes], {
+        type: 'application/pdf'
+      });
+
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Watermarked_${fileName}`;
+      link.click();
+      log("Download started.");
+    });
+  </script>
+</body>
+</html>
