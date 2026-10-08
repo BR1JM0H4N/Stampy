@@ -54,7 +54,7 @@
       left: 0;
       width: 100%;
       height: calc(var(--safe-area-inset-top, 0px));
-      background-color: var(--bg);
+      background-color: var(--suface);
       z-index: 9999;
       pointer-events: none;
     }
@@ -70,21 +70,19 @@
     }
 
     /* ===== Top app bar ===== */
-    header {
-      position: sticky;
-      top: 0;
+    .head {
       z-index: 10;
       display: flex;
       align-items: center;
       height: 64px;
-      padding: 55px 16px 30px 16px;
-      background: var(--bg);
+      padding: 30px 16px 30px 16px;
+      background: var(--surface);
       color: var(--fg);
       font-size: 1.375rem;
       font-weight: 400;
       letter-spacing: 0;
     }
-    header strong {
+    .head strong {
       font-weight: 400;
     }
     .logo {
@@ -481,31 +479,31 @@
 </head>
 <body>
   <div class="safe-top-patch"></div>
-
-  <header>
-<svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
-      <rect class="logo-bg" x="0" y="0" width="48" height="48" rx="14"/>
-      <g class="logo-mark">
-        <rect x="18.5" y="7" width="11" height="9" rx="4.5"/>
-        <path d="M21 15h6l1.2 10h-8.4z"/>
-        <rect x="10.5" y="24.5" width="27" height="7.5" rx="2.5"/>
-        <rect x="13" y="36" width="22" height="3" rx="1.5" opacity=".55"/>
-      </g>
-    </svg>
-    <strong>Stampy</strong>
-    <button id="settings-btn" class="icon-btn" type="button" aria-label="Settings">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" /></svg>
-    </button>
-  </header>
-
   <main>
-     <div id="pdf-container">
+    <div class="head">
+      <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+        <rect class="logo-bg" x="0" y="0" width="48" height="48" rx="14" />
+        <g class="logo-mark">
+          <rect x="18.5" y="7" width="11" height="9" rx="4.5" />
+          <path d="M21 15h6l1.2 10h-8.4z" />
+          <rect x="10.5" y="24.5" width="27" height="7.5" rx="2.5" />
+          <rect x="13" y="36" width="22" height="3" rx="1.5" opacity=".55" />
+        </g>
+      </svg>
+      <strong>Stampy</strong>
+      <button id="settings-btn" class="icon-btn" type="button" aria-label="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" /></svg>
+      </button>
+    </div>
+
+
+    <div id="pdf-container">
       <canvas id="pdf-canvas"></canvas>
       <div id="watermark">
         Sample Watermark
       </div>
     </div>
-    
+
     <div class="controls">
       <input type="file" id="pdf-file" accept="application/pdf">
       <input type="text" id="watermark-text" placeholder="Watermark text" value="Sample Watermark">
@@ -527,7 +525,7 @@
       <button id="apply">Apply watermark &amp; download</button>
     </div>
 
-       <div id="log-panel"></div>
+    <div id="log-panel"></div>
   </main>
   <div class="safe-bottom-patch"></div>
 
@@ -794,7 +792,7 @@
       const text = watermarkInput.value || 'Watermark';
       // Rotate around the preview box centre so the PDF matches the preview
       const boxW = watermark.offsetWidth * scaleX;
-      const boxH = watermark.offsetHeight * scaleY ;
+      const boxH = watermark.offsetHeight * scaleY;
       // keep the centre of the preview box as the centre of the smaller text
       const cxPdf = (offsetX + watermark.offsetWidth/2) * scaleX;
       const cyPdf = height - (offsetY + watermark.offsetHeight/2) * scaleY;
