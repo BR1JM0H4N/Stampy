@@ -499,6 +499,13 @@
   </header>
 
   <main>
+     <div id="pdf-container">
+      <canvas id="pdf-canvas"></canvas>
+      <div id="watermark">
+        Sample Watermark
+      </div>
+    </div>
+    
     <div class="controls">
       <input type="file" id="pdf-file" accept="application/pdf">
       <input type="text" id="watermark-text" placeholder="Watermark text" value="Sample Watermark">
@@ -520,14 +527,7 @@
       <button id="apply">Apply watermark &amp; download</button>
     </div>
 
-    <div id="pdf-container">
-      <canvas id="pdf-canvas"></canvas>
-      <div id="watermark">
-        Sample Watermark
-      </div>
-    </div>
-
-    <div id="log-panel"></div>
+       <div id="log-panel"></div>
   </main>
   <div class="safe-bottom-patch"></div>
 
