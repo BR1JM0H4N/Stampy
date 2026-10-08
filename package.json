@@ -1,6 +1,6 @@
 {
   "name": "Stampy",
-  "version": "1.2.0",
+  "version": "1.5",
   "description": "PDF watermark tool",
   "scripts": {
     "sync": "cap sync android"
