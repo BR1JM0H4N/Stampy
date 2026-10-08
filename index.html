@@ -793,8 +793,8 @@
       })();
       const text = watermarkInput.value || 'Watermark';
       // Rotate around the preview box centre so the PDF matches the preview
-      const boxW = watermark.offsetWidth * scaleX * k;
-      const boxH = watermark.offsetHeight * scaleY * k;
+      const boxW = watermark.offsetWidth * scaleX;
+      const boxH = watermark.offsetHeight * scaleY ;
       // keep the centre of the preview box as the centre of the smaller text
       const cxPdf = (offsetX + watermark.offsetWidth/2) * scaleX;
       const cyPdf = height - (offsetY + watermark.offsetHeight/2) * scaleY;
